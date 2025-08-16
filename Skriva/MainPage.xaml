@@ -2,16 +2,93 @@
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:local="using:Skriva"
+      xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
       Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-  <ScrollViewer IsTabStop="True">
-    <Grid>
-      <StackPanel
-        HorizontalAlignment="Center"
-        VerticalAlignment="Center">
-        <TextBlock AutomationProperties.AutomationId="HelloTextBlock"
-          Text="Hello Uno Platform!"
-          HorizontalAlignment="Center" />
-      </StackPanel>
+
+    <Grid x:Name="MainGrid">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="30"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="250" MinWidth="100" MaxWidth="500"/>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <!-- Mebu Bar -->
+        <MenuBar Grid.ColumnSpan="4">
+            <MenuBarItem Title="File">
+                <MenuFlyoutItem Text="New File"/>
+                <MenuFlyoutItem Text="New Project"/>
+                <MenuFlyoutSeparator/>
+                <MenuFlyoutItem Text="Open File" Click="MenuFile_OpenFile" />
+                <MenuFlyoutItem Text="Open Project" Click="MenuFile_OpenProject" />
+                <MenuFlyoutSubItem Text="Open Recent">
+                </MenuFlyoutSubItem>
+                <MenuFlyoutSeparator/>
+                <MenuFlyoutItem Text="Save" Click="MenuFile_Save"/>
+                <MenuFlyoutItem Text="Save As..."/>
+                <ToggleMenuFlyoutItem Text="Auto Save"/>
+                <MenuFlyoutSeparator/>
+                <MenuFlyoutItem Text="Exit"/>
+            </MenuBarItem>
+            <MenuBarItem Title="Edit">
+                <MenuFlyoutItem Text="Undo"/>
+                <MenuFlyoutItem Text="Redo"/>
+                <MenuFlyoutSeparator/>
+                <MenuFlyoutItem Text="Cut"/>
+                <MenuFlyoutItem Text="Copy"/>
+                <MenuFlyoutItem Text="Paste"/>
+            </MenuBarItem>
+            <MenuBarItem Title="View">
+                <ToggleMenuFlyoutItem x:Name="ToggleWordCountMenuItem" Text="Word Count" Click="ToggleStatusBarItem_Click" IsChecked="True"/>
+                <ToggleMenuFlyoutItem x:Name="ToggleCharCountMenuItem" Text="Character Count" Click="ToggleStatusBarItem_Click" IsChecked="True"/>
+            </MenuBarItem>
+            <MenuBarItem Title="Help">
+                <MenuFlyoutItem Text="About"/>
+            </MenuBarItem>
+        </MenuBar>
+
+        <!-- Vertical Toolbar -->
+        <StackPanel Grid.Row="1" Grid.Column="0" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" BorderBrush="Gray" BorderThickness="0,0,1,0">
+            <Button x:Name="ToggleFileTreeButton" Click="ToggleFileTreeButton_Click"
+                    Background="Transparent" BorderThickness="0" Margin="0,10,0,0">
+                <FontIcon Glyph="&#xE700;" FontSize="20"/> <!-- Hamburger icon -->
+            </Button>
+        </StackPanel>
+
+        <!-- File Tree -->
+        <Border Grid.Row="1" Grid.Column="1" BorderBrush="Gray" BorderThickness="0,0,1,0">
+                        <muxc:TreeView x:Name="FileTreeView" ItemInvoked="FileTreeView_ItemInvoked">
+                <muxc:TreeView.ItemTemplate>
+                    <DataTemplate x:DataType="local:FileSystemItem">
+                        <muxc:TreeViewItem
+                            ItemsSource="{x:Bind Children}"
+                            Content="{x:Bind Name}"
+                            IsExpanded="True"/>
+                    </DataTemplate>
+                </muxc:TreeView.ItemTemplate>
+            </muxc:TreeView>
+        </Border>
+
+        <!-- Grid Splitter -->
+        <Rectangle x:Name="GridSplitter" Grid.Row="1" Grid.Column="2" Width="8" Background="Gray" ManipulationMode="TranslateX" ManipulationDelta="GridSplitter_ManipulationDelta" />
+
+        <!-- Editor with Tabs -->
+        <Grid Grid.Row="1" Grid.Column="3">
+            <muxc:TabView x:Name="EditorTabView" TabCloseRequested="EditorTabView_TabCloseRequested" SelectionChanged="EditorTabView_SelectionChanged">
+            </muxc:TabView>
+        </Grid>
+
+        <!-- Status Bar -->
+        <Border Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="4" BorderBrush="Gray" BorderThickness="0,1,0,0">
+            <StackPanel x:Name="StatusBarPanel" Orientation="Horizontal">
+                <TextBlock x:Name="WordCountTextBlock" Text="Words: 0" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="10,0,0,0"/>
+                <TextBlock x:Name="CharCountTextBlock" Text="Characters: 0" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="20,0,0,0"/>
+            </StackPanel>
+        </Border>
     </Grid>
-  </ScrollViewer>
 </Page>
